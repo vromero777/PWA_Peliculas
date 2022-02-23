@@ -1,50 +1,53 @@
 // Constante
 const headers = {
         'Content-type': 'application/json',
-        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eGV6cGhjb2lpcGphb2d4bnppIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU0MzgzMjksImV4cCI6MTk2MTAxNDMyOX0.RaIi-WWMMgSq9I7pPvV8JDr7dC7e6M1XvEjY186DVIM',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eGV6cGhjb2lpcGphb2d4bnppIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU0MzgzMjksImV4cCI6MTk2MTAxNDMyOX0.RaIi-WWMMgSq9I7pPvV8JDr7dC7e6M1XvEjY186DVIM'
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdG9scXB4Y3l1eXBxdG1uemlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU2MDMyNTYsImV4cCI6MTk2MTE3OTI1Nn0.uzSvnkm6SV3kt97XytwcnISZlGeX17gVQwClv34vEWQ',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdG9scXB4Y3l1eXBxdG1uemlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU2MDMyNTYsImV4cCI6MTk2MTE3OTI1Nn0.uzSvnkm6SV3kt97XytwcnISZlGeX17gVQwClv34vEWQ'
     }
 
 Vue.createApp({
     data() {
         return {
-            APIURL: 'https://ntxezphcoiipjaogxnzi.supabase.co/rest/v1/peliculas',
-            peliculas:[],
-            verForm: false,
-            nuevoNombre:'',
-            nuevaDuracion:'',
+            peliculas: [],
+            APIUrl: 'https://vftolqpxcyuypqtmnzid.supabase.co/rest/v1/Pelicula-equipo',
+            verFormAnyadir: false,
+            nuevoNombre: '',
+            nuevaDuracion: '',
             isLoading: false,
-            peliculasEditables: -1
+            peliculasEditables: -1,
+            editarNombre: '',
+            editarDuracion: ''
         }
     },
     methods: {
         getPeliculas: async function () {
-            this.isLoading = true
-            const fetchPeliculas = await fetch(`${this.APIURL}?select=*`, { headers });
+            this.isLoading = true;
+            const fetchPeliculas = await fetch(`${this.APIUrl}?select=*`, { headers });
             this.peliculas = await fetchPeliculas.json();
-            this.isLoading = false
+            this.isLoading = false;
         },
-        addPeliculas: async function () {
-            this.isLoading = true
-            // OCultar el Formulario
-            this.verForm = false;
-            //Añadir la pelicula a la base de datos
-            const fetchPeliculas = await fetch(this.APIURL,
+        addPelicula: async function() {
+            this.isLoading = true;
+            // Ocultar el formulario
+            this.verFormAnyadir = false;
+            // Anyadir la pelicula a la base de datos
+            const fetchPeliculas = await fetch(this.APIUrl,
                 {
                     headers: headers,
                     method: 'POST',
-                    body: JSON.stringify({"name":this.nuevoNombre, "duration": this.nuevaDuracion})
-                });
+                    body: JSON.stringify({"name": this.nuevoNombre, "duration": this.nuevaDuracion})
+                }
+            );
             // Reiniciamos formulario
             this.nuevoNombre = '';
             this.nuevaDuracion = '';
+            // Obtenemos de nuevo las peliculas
             this.getPeliculas();
-            this.isLoading = false
-
+            this.isLoading = false;
         },
         deletePelicula: async function (id) {
             // Borramos de la base de datos
-             await fetch(`${this.APIURL}?id=eq.${id}`,
+            await fetch(`${this.APIUrl}?id=eq.${id}`,
                 {
                     headers: headers,
                     method: 'DELETE'
@@ -52,18 +55,41 @@ Vue.createApp({
             );
             this.getPeliculas();
         },
-
+        verEditarPelicula: function(id) {
+            // Mostramos el campo a editar
+            this.peliculasEditables = id;
+            // Obtenemos la informacion
+            const peliculaAEditar = this.peliculas.filter(function(pelicula) {
+                return pelicula.id === id;
+            })[0];
+            // Mostramos datos
+            this.editarNombre = peliculaAEditar.name;
+            this.editarDuracion = peliculaAEditar.duration;
+        },
+        editarPelicula: async function(id) {
+            this.isLoading = true;
+            this.peliculasEditables = -1;
+            const fetchPeliculas = await fetch(`${this.APIUrl}?id=eq.${id}`,
+                {
+                    headers: headers,
+                    method: 'PATCH',
+                    body: JSON.stringify({"name": this.editarNombre, "duration": this.editarDuracion})
+                }
+            );
+            this.getPeliculas();
+            this.isLoading = false;
+        }
     },
     watch: {
-        isLoading(value){
-            if(value){
-                NProgress.start()
+        isLoading(value) {
+            if(value) {
+                NProgress.start();
             } else {
                 NProgress.done();
             }
         }
     },
     mounted: function () {
-        this.getPeliculas ()
+        this.getPeliculas();
     }
 }).mount('#app')
