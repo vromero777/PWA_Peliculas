@@ -2,7 +2,8 @@
 const headers = {
         'Content-type': 'application/json',
         'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdG9scXB4Y3l1eXBxdG1uemlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU2MDMyNTYsImV4cCI6MTk2MTE3OTI1Nn0.uzSvnkm6SV3kt97XytwcnISZlGeX17gVQwClv34vEWQ',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdG9scXB4Y3l1eXBxdG1uemlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU2MDMyNTYsImV4cCI6MTk2MTE3OTI1Nn0.uzSvnkm6SV3kt97XytwcnISZlGeX17gVQwClv34vEWQ'
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdG9scXB4Y3l1eXBxdG1uemlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDU2MDMyNTYsImV4cCI6MTk2MTE3OTI1Nn0.uzSvnkm6SV3kt97XytwcnISZlGeX17gVQwClv34vEWQ',
+        'Range': '0-9'
     }
 
 Vue.createApp({
@@ -16,10 +17,15 @@ Vue.createApp({
             isLoading: false,
             peliculasEditables: -1,
             editarNombre: '',
-            editarDuracion: ''
+            editarDuracion: '',
+            numeroResultadosPorPagina: 5,
+            pag: 1,
+            paginadorRangoInicio: 0,
+            paginadorRangoFinal: 9
         }
     },
     methods: {
+        getHeader
         getPeliculas: async function () {
             this.isLoading = true;
             const fetchPeliculas = await fetch(`${this.APIUrl}?select=*`, { headers });
