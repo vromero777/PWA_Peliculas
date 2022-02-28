@@ -93,6 +93,11 @@ Vue.createApp({
             this.isLoading = false;
         }
     },
+    computed: {
+        maxPags: function () {
+            return Math.ceil(this.peliculas.length / this.numeroResultadosPorPagina);
+        }
+    },
     watch: {
         isLoading(value) {
             if(value) {

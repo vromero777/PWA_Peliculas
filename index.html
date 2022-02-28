@@ -70,8 +70,18 @@
             </table>
         </div>
         <div class="block">
-            <button class="button" @click="pag = pag - 1" v-if="pag > 1">👈</button>
-            <button class="button" @click="pag = pag + 1">👉</button>
+            <button
+                    class="button"
+                    @click="pag = pag - 1"
+                    v-if="pag > 1"
+                    :disabled = "isLoading"
+            >👈</button>
+            <button
+                    v-if="pag < maxPags"
+                    :disabled = "isLoading"
+                    class="button"
+                    @click="pag = pag + 1"
+            >👉</button>
         </div>
     </main>
 </div>
